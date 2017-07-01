@@ -41,10 +41,9 @@
             </div>
           </div>
 
-          <form action = "http://localhost:8081/discussions" method = "POST">
             <div class="row">
               <div class="input-field col s12">
-                <input id="input-nick" name="nickname" type="text" class="validate">
+                <input id="login-input-nick" name="nickname" type="text" class="validate">
                 <label for="input-nick">Nickname</label>
               </div>
             </div>
@@ -85,9 +84,8 @@
            </div>
 
            <div class="col s12 center margin-top-10">
-             <button class="btn waves-effect waves-light" type="submit" name="action">Começar</button>
+             <button id="login-start" class="btn waves-effect waves-light" type="submit" name="action">Começar</button>
            </div>
-         </form>
 
        </div>
      </div>
@@ -147,13 +145,13 @@
         </div>
         <div class="row">
           <div class="input-field col s12">
-            <input id="modal-titulo" type="text" class="validate">
-            <label for="modal-titulo">Título</label>
+            <input id="new-discussion-title" type="text" class="validate">
+            <label for="new-discussion-title">Título</label>
           </div>
         </div>
         <div class="row">
           <div class="input-field col s12">
-            <select multiple>
+            <select id="new-discussion-preferences" multiple>
               <option value="" disabled selected>Escolha os tópicos relacionados</option>
               <option value="1">Java</option>
               <option value="2">Android</option>
@@ -174,7 +172,7 @@
       </div>
       <div class="modal-footer">
         <div class="col s12 center">
-          <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Iniciar Discussão</a>
+          <a id="new-discussion-submit" href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Iniciar Discussão</a>
         </div>
       </div>
     </div>
@@ -222,5 +220,65 @@
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 <!-- Compiled and minified JavaScript -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.min.js"></script>
+
+<script>
+ $(document).ready(function() {
+   $('.modal').modal();
+   $('select').material_select();
+ });
+</script>
+
+<script src="http://requirejs.org/docs/release/2.3.3/minified/require.js"></script>
+
+<script>
+   var ws = new WebSocket('ws://localhost:3000/splash');
+
+   var topic;
+
+   ws.onopen = function() {
+      //ws.send('something');
+   }
+
+   ws.onmessage = function(e) {
+      if (e.data.includes('mqtt')) {
+         var protocol = e.data.split(";");
+         if (topic == protocol[1]) {
+            document.getElementById("room-chat").innerHTML += protocol[2] + "<br>";
+         }
+      }
+   }
+
+   ws.onclose = function() {
+      alert('close');
+   }
+
+   $('#login-start').click(function() {
+      var nick = $('#login-input-nick').val();
+
+      var user = {nickname:"ola", interesses: ["Java", "Ruby"]};
+
+      ws.send(user);
+   });
+
+   $('#new-discussion-submit').click(function() {
+      var title = $('#new-discussion-title').val();
+      topic = "sitf-" + title;
+      var protocol = "sitf-subscribe;" + topic;
+      ws.send(protocol);
+
+      $('#splash-discussions').css('display', 'none');
+      $('#splash-room').css('display', 'block');
+   });
+
+   function sendMessage(event) {
+      var x = event.keyCode;
+      if (x == 13) {
+         ws.send('sitf-publish;'+ topic + ';' + $('#room-msg').val());
+         $('#room-msg').val("");
+      }
+   }
+
+</script>
+
 </body>
 </html>

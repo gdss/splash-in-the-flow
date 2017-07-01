@@ -44,11 +44,11 @@ main {
 /* Telas de Splash */
 
 #splash-login {
-	
+	display: none;
 }
 
 #splash-discussions {
-	display: none;
+	
 }
 
 #splash-room {

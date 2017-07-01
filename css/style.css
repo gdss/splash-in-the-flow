@@ -1,0 +1,56 @@
+header {
+	padding-top: 16px;
+}
+
+main {
+	padding-top: 16px;
+}
+
+.padding-top-10 {
+	padding-top: 10px;
+}
+
+.margin-top-10 {
+	margin-top: 10px;
+}
+
+.room {
+	height: 100%;
+}
+
+.card-splash-15 {
+	padding: 16px !important;
+}
+
+.card-splash-30 {
+	padding: 32px !important;
+}
+
+/* Override */
+
+.fixed-action-btn {
+	padding-right: 16px;
+	padding-bottom: 16px;
+}
+
+.modal {
+	width: 500px;
+}
+
+.modal .modal-footer .btn-flat {
+	float: none;
+}
+
+/* Telas de Splash */
+
+#splash-login {
+	
+}
+
+#splash-discussions {
+	display: none;
+}
+
+#splash-room {
+	display: none;
+}

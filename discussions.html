@@ -1,0 +1,129 @@
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <!--Import Google Icon Font-->
+    <link href="http://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css">
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <link type="text/css" rel="stylesheet" href="css/style.css" />
+
+    <title>Splash in the Flow</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <div class="row">
+          <div class="col s12">
+           <span class="flow-text">Splash in the Flow</span>
+         </div>
+       </div>
+     </div>
+   </header>
+
+   <main>
+
+    <div class="container">
+
+      <div class="row">
+        <div class="col m8 offset-m2 s12 card card-splash-30">
+
+          <div class="row">
+            <div class="col s12 center">
+              <span class="flow-text">Discussões em andamento</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col s12">
+              <div class="collection">
+                <a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">Java</span>Java para iniciantes</a>
+                <a href="#!" class="collection-item">
+                  <span class="new badge" data-badge-caption="">Android</span>
+                  <span class="new badge" data-badge-caption="">Java</span>
+                  Kotlin vs Java para Android</a>
+                  <a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">Ruby</span>Aprenda Ruby on Rails</a>
+                  <a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">CSS3</span>HTML5 + CSS3</a>
+                  <a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">CSS3</span>HTML5 + CSS3</a>
+                  <a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">CSS3</span>HTML5 + CSS3</a>
+                  <a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">CSS3</span>HTML5 + CSS3</a>
+                  <a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">CSS3</span>HTML5 + CSS3</a>
+                  <a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">CSS3</span>HTML5 + CSS3</a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <div class="fixed-action-btn">
+        <a href="#new-discussion" class="btn-floating btn-large waves-effect waves-light tooltipped" data-position="left" data-delay="50" data-tooltip="Nova Discussão">
+         <i class="large material-icons">add</i>
+       </a>
+     </div>
+
+     <!-- Modal Structure -->
+     <div id="new-discussion" class="modal modal-fixed-footer">
+      <div class="modal-content">
+        <div class="row">
+          <div class="col s12">
+            <span class="flow-text">Nova Discussão</span>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <input id="modal-titulo" type="text" class="validate">
+            <label for="modal-titulo">Título</label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="input-field col s12">
+            <select multiple>
+              <option value="" disabled selected>Escolha os tópicos relacionados</option>
+              <option value="1">Java</option>
+              <option value="2">Android</option>
+              <option value="3">Ruby</option>
+              <option value="3">Ruby</option>
+              <option value="3">Ruby</option>
+              <option value="3">Ruby</option>
+              <option value="3">Ruby</option>
+              <option value="3">Ruby</option>
+              <option value="3">Ruby</option>
+              <option value="3">Ruby</option>
+              <option value="3">Ruby</option>
+              <option value="3">Ruby</option>
+            </select>
+            <label>Tópicos</label>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="col s12 center">
+          <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Iniciar Discussão</a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!--Import jQuery before materialize.js-->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <!-- Compiled and minified JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.min.js"></script>
+
+  <script>
+    $(document).ready(function() {
+      $('.modal').modal();
+      $('select').material_select();
+    });
+  </script>
+
+</body>
+</html>

@@ -1,11 +1,12 @@
 const WebSocket = require('ws');
-var mqtt = require('mqtt')
+var mqtt = require('mqtt');
 
-var client  = mqtt.connect('mqtt://test.mosquitto.org')
+var client  = mqtt.connect('mqtt://test.mosquitto.org');
+var topics = [];
 
 client.on('connect', function () {
- 
-})
+
+});
 
 client.on('message', function (topic, message) {
  // message is Buffer 
@@ -14,8 +15,7 @@ client.on('message', function (topic, message) {
 			c.send("mqtt;" + topic + ";" + message.toString());
 		}
 	});
- console.log()
-})
+});
 
 const wss = new WebSocket.Server({ port: 3000, path: '/splash' });
 
@@ -25,9 +25,15 @@ wss.on('connection', function(ws) {
   	if (message.includes('sitf-subscribe')) {
   		var protocol = message.split(";");
   		client.subscribe(protocol[1]);
+  		var topic = protocol[1].substring(5);
+  		if (!topics.includes(topic)) {
+  			topics.push(topic);
+  		}
   	} else if (message.includes('sitf-publish')) {
   		var protocol = message.split(";");
   		client.publish(protocol[1], protocol[2]);
+  	} else if (message.includes('sitf-topics')) {
+  		ws.send('sitf-topics-return;' + topics);
   	}
 
     console.log('received: %s', message);

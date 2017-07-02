@@ -54,3 +54,7 @@ main {
 #splash-room {
 	display: none;
 }
+
+#room-chat {
+    overflow: auto;
+}

@@ -174,14 +174,13 @@
 
           <div class="row">
             <div class="col s12 center">
-              <span class="flow-text">Kotlin vs Java para Android</span>
+              <span class="flow-text" id="room-title"></span>
             </div>
           </div>
 
           <div class="row" style="height: 320px">
 
             <div class="col s9 card room" id="room-chat">
-              <p>Geyson Daniel entrou na discussão</p>
             </div>
 
             <div class="col s3 card room">
@@ -225,33 +224,40 @@
 
    ws.onopen = function() {
       //ws.send('something');
-       ws.send("sitf-topics");
    }
 
    ws.onmessage = function(e) {
       if (e.data.includes('mqtt')) {
          var protocol = e.data.split(";");
          if (topic == protocol[1]) {
-            document.getElementById("room-chat").innerHTML += protocol[2] + "<br>";
+            addMessageToChat(protocol[2]);
             updateScroll();
          }
-      }else if(e.data.includes('sitf-topics-return')){
+      } else if(e.data.includes('sitf-topics-return')) {
+
+         document.getElementById("discussions-list").innerHTML = '';
        
           var protocol = e.data.split(";");
           protocol.shift();
           protocol = protocol.toString().split(',');
 
           for (var i = 0; i < protocol.length; i++) {
-            document.getElementById("discussions-list").innerHTML += '<a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">SI </span>' + protocol[i] + '</a>'
+            if (!protocol[i] == '') {
+               document.getElementById("discussions-list").innerHTML += '<a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">SI </span>' + protocol[i] + '</a>'
+            }
           }
 
             $('.collection-item').click(function() {
                goRoom(this.text.split(' ')[1]);
             });
 
-      }else{
-         alert(e.data);
+      } else if (e.data.includes('sitf-login-return')) {
+         goDiscussions();
       }
+   }
+
+   function addMessageToChat(message) {
+      document.getElementById("room-chat").innerHTML += message + "<br>";
    }
    
    ws.onclose = function() {
@@ -260,10 +266,9 @@
 
    $('#login-start').click(function() {
       var nick = $('#login-input-nick').val();
-
-      var user = {nickname:"ola", interesses: ["Java", "Ruby"]};
-
-      ws.send(user);
+      nickname = nick;
+      var protocol = 'sitf-login;' + nick;
+      ws.send(protocol);
    });
 
    $('#new-discussion-submit').click(function() {
@@ -271,12 +276,20 @@
       goRoom(title);
    });
 
+   function goDiscussions() {
+      ws.send("sitf-topics");
+      $('#splash-login').css('display', 'none');
+      $('#splash-discussions').css('display', 'block');
+   }
+
    function goRoom(t) {
       topic = 'sitf-' + t;
       var protocol = "sitf-subscribe;" + topic;
       ws.send(protocol);
       $('#splash-discussions').css('display', 'none');
       $('#splash-room').css('display', 'block');
+      ws.send('sitf-publish;'+ topic + ';' + 'entrou na sala');
+      $('#room-title').text(t);
    }
 
    function sendMessage(event) {

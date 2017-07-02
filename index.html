@@ -217,7 +217,7 @@
 <script src="http://requirejs.org/docs/release/2.3.3/minified/require.js"></script>
 
 <script>
-   var ws = new WebSocket('ws://localhost:3000/splash');
+   var ws = new WebSocket('ws://192.168.0.150:3000/splash');
 
    var nickname;
    var topic;
@@ -288,7 +288,6 @@
       ws.send(protocol);
       $('#splash-discussions').css('display', 'none');
       $('#splash-room').css('display', 'block');
-      ws.send('sitf-publish;'+ topic + ';' + 'entrou na sala');
       $('#room-title').text(t);
    }
 

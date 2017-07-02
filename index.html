@@ -251,8 +251,6 @@
                goRoom($(this).children().eq(1).text());
             });
 
-      } else if (e.data.includes('sitf-login-return')) {
-         goDiscussions();
       }
    }
 
@@ -265,10 +263,8 @@
    }
 
    $('#login-start').click(function() {
-      var nick = $('#login-input-nick').val();
-      nickname = nick;
-      var protocol = 'sitf-login;' + nick;
-      ws.send(protocol);
+      nickname = $('#login-input-nick').val();
+      goDiscussions();
    });
 
    $('#new-discussion-submit').click(function() {
@@ -289,12 +285,13 @@
       $('#splash-discussions').css('display', 'none');
       $('#splash-room').css('display', 'block');
       $('#room-title').text(t);
+      ws.send('sitf-publish;'+ topic + ';' + nickname + ' entrou na sala');
    }
 
    function sendMessage(event) {
       var x = event.keyCode;
       if (x == 13) {
-         ws.send('sitf-publish;'+ topic + ';' + $('#room-msg').val());
+         ws.send('sitf-publish;'+ topic + ';' + nickname + ': ' + $('#room-msg').val());
          $('#room-msg').val("");
       }
    }

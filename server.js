@@ -12,7 +12,7 @@ client.on('message', function (topic, message) {
  // message is Buffer 
  wss.clients.forEach(function each(c) {
 		if (c.readyState === WebSocket.OPEN) {
-			c.send("mqtt;" + topic + ";" + c.login + ": " + message.toString());
+			c.send("mqtt;" + topic + ";" + message.toString());
 		}
 	});
 });
@@ -35,11 +35,6 @@ wss.on('connection', function(ws) {
 				}
 			});
   		}
-  		 wss.clients.forEach(function each(c) {
-			if (c.readyState === WebSocket.OPEN) {
-				c.send("mqtt;" + topic + ";" + ws.login + " entrou na sala");
-			}
-		});
   	} else if (message.includes('sitf-publish')) {
   		var protocol = message.split(";");
   		client.publish(protocol[1], protocol[2]);

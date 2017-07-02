@@ -243,12 +243,12 @@
 
           for (var i = 0; i < protocol.length; i++) {
             if (!protocol[i] == '') {
-               document.getElementById("discussions-list").innerHTML += '<a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">SI </span>' + protocol[i] + '</a>'
+               document.getElementById("discussions-list").innerHTML += '<a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">SI</span><span class="discussion-topic">' + protocol[i] + '</span></a>'
             }
           }
 
             $('.collection-item').click(function() {
-               goRoom(this.text.split(' ')[1]);
+               goRoom($(this).children().eq(1).text());
             });
 
       } else if (e.data.includes('sitf-login-return')) {

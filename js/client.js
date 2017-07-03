@@ -12,7 +12,7 @@ ws.onopen = function() {
 ws.onmessage = function(e) {
   if (e.data.includes('mqtt')) {
      var protocol = e.data.split(";");
-     if (topic == protocol[1]) {
+     if (topic + "-"+ preference_room == protocol[1]) {
         addMessageToChat(protocol[2]);
         updateScroll();
      }
@@ -93,13 +93,13 @@ function goRoom(t, p) {
   $('#room-title').text(t);
 
   document.getElementById("room-chat").innerHTML = '';
-  ws.send('sitf-publish;'+ topic + ';' + nickname + ' entrou na sala');
+  ws.send('sitf-publish;'+ topic + "-"+ preference_room +  ';' + nickname + ' entrou na sala');
 }
 
 function sendMessage(event) {
   var x = event.keyCode;
   if (x == 13) {
-     ws.send('sitf-publish;'+ topic + ';' + nickname + ': ' + $('#room-msg').val());
+     ws.send('sitf-publish;'+ topic +'-' + preference_room + ';' + nickname + ': ' + $('#room-msg').val());
      $('#room-msg').val("");
   }
 }

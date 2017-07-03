@@ -2,7 +2,7 @@ const WebSocket = require('ws');
 var mqtt = require('mqtt');
 
 var client  = mqtt.connect('mqtt://test.mosquitto.org');
-var topics = {};
+var topics = {'Java':{}, 'Python':{}, 'CSS3':{}, 'NodeJS':{}, 'Ruby':{}, 'Android':{}};
 var logins = [];
 
 client.on('connect', function () {
@@ -25,21 +25,23 @@ wss.on('connection', function(ws) {
 
   	if (message.includes('sitf-subscribe')) {
   		var protocol = message.split(";");
-  		client.subscribe(protocol[1]);
-  		var topic = protocol[1].substring(5);
-
-  		if (Object.keys(topics).includes(topic)) {
-  			topics[topic] += 1;
+  		protocol.shift();
+  		var discussion = protocol[0];
+  		var preference = protocol[1];
+  		client.subscribe(discussion + '-' + preference);
+  		discussion = discussion.substring(5);
+  		if (Object.keys(topics[preference]).includes(discussion)) {
+  			topics[preference][discussion] += 1;
   		} else {
-  			topics[topic] = 1;
+  			topics[preference][discussion] = 1;
   			attTopics();
   		}
-  		console.log('o topico ' + topic + ' tem ' + topics[topic]);
+  		console.log('A discussion (' + discussion + ') tem ' + topics[preference][discussion] + ' online');
   	} else if (message.includes('sitf-publish')) {
   		var protocol = message.split(";");
   		client.publish(protocol[1], protocol[2]);
   	} else if (message.includes('sitf-topics')) {
-  		ws.send('sitf-topics-return;' + Object.keys(topics));
+  		ws.send('sitf-topics-return;' + getAllTopics());
   	} else if (message.includes('sitf-login')) {
   		var login = message.split(";")[1];
   		if (!logins.includes(login) && login != '') {
@@ -49,11 +51,14 @@ wss.on('connection', function(ws) {
   			ws.send('sitf-login-failure');
   		}
   	} else if (message.includes('sitf-exit-subscribe')) {
-  		var topic = message.split(";")[1].substring(5);
-  		topics[topic] -= 1;
-  		console.log('o topico ' + topic + ' tem ' + topics[topic]);
-  		if (topics[topic] <= 0) {
-  			delete topics[topic];
+  		var protocol = message.split(";");
+  		protocol.shift();
+  		var discussion = protocol[0].substring(5);
+  		var preference = protocol[1];
+  		topics[preference][discussion] -= 1;
+  		console.log('A discussion (' + discussion + ') tem ' + topics[preference][discussion] + ' online');
+  		if (topics[preference][discussion] <= 0) {
+  			delete topics[preference][discussion];
   			attTopics();
   		}
   	}
@@ -67,7 +72,21 @@ wss.on('connection', function(ws) {
 function attTopics() {
 	wss.clients.forEach(function each(c) {
 		if (c.readyState === WebSocket.OPEN) {
-			c.send('sitf-topics-return;' + Object.keys(topics));
+			c.send('sitf-topics-return;' + getAllTopics());
 		}
 	});
+}
+
+function getAllTopics() {
+	var topics_return = [];
+	var preferences = Object.keys(topics);
+	for (var i = 0; i < preferences.length; i++) {
+		var discussions = Object.keys(topics[preferences[i]]);
+		for (var j = 0; j < discussions.length; j++) {
+			if(topics[preferences[i]][discussions[j]] > 0) {
+				topics_return.push(discussions[j] + '<>' + preferences[i]);
+			}
+		}
+	}
+	return topics_return;
 }

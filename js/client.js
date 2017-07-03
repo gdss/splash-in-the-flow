@@ -2,6 +2,8 @@ var ws = new WebSocket('ws://192.168.0.150:3000/splash');
 
 var nickname;
 var topic;
+var preference_room;
+var preferences = [];
 
 ws.onopen = function() {
   //ws.send('something');
@@ -18,18 +20,18 @@ ws.onmessage = function(e) {
 
      document.getElementById("discussions-list").innerHTML = '';
    
-      var protocol = e.data.split(";");
+      var protocol = e.data.split(';');
       protocol.shift();
-      protocol = protocol.toString().split(',');
 
       for (var i = 0; i < protocol.length; i++) {
         if (!protocol[i] == '') {
-           document.getElementById("discussions-list").innerHTML += '<a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">SI</span><span class="discussion-topic">' + protocol[i] + '</span></a>'
+        		var discussion = protocol[i].split('<>');
+           document.getElementById("discussions-list").innerHTML += '<a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">'+ discussion[1] +'</span><span class="discussion-topic">' + discussion[0] + '</span></a>'
         }
       }
 
         $('.collection-item').click(function() {
-           goRoom($(this).children().eq(1).text());
+           goRoom($(this).children().eq(1).text(), $(this).children().eq(0).text());
         });
 
   } else if (e.data.includes('sitf-login-sucess')) {
@@ -49,12 +51,14 @@ ws.onclose = function() {
 
 $('#login-start').click(function() {
   nickname = $('#login-input-nick').val();
+  getPreferences();
   ws.send('sitf-login;' + nickname);
 });
 
 $('#new-discussion-submit').click(function() {
   var title = $('#new-discussion-title').val();
-  goRoom(title);
+  var preference = $('#new-discussion-preference').val();
+  goRoom(title, preference);
 });
 
 function goDiscussions() {
@@ -64,9 +68,10 @@ function goDiscussions() {
   $('#splash-room').css('display', 'none');
 }
 
-function goRoom(t) {
+function goRoom(t, p) {
   topic = 'sitf-' + t;
-  var protocol = "sitf-subscribe;" + topic;
+  preference_room = p;
+  var protocol = "sitf-subscribe;" + topic + ";" + p;
   ws.send(protocol);
   $('#splash-discussions').css('display', 'none');
   $('#splash-room').css('display', 'block');
@@ -90,6 +95,12 @@ function updateScroll(){
 }
 
 $('#room-exit').click(function() {
-	ws.send('sitf-exit-subscribe;' + topic);
+	ws.send('sitf-exit-subscribe;' + topic + ';' + preference_room);
 	goDiscussions();
 });
+
+function getPreferences() {
+	$('input:checkbox[name=preference]:checked').each(function() {
+		preferences.push($(this).val());
+	});
+}

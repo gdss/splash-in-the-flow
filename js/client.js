@@ -18,27 +18,35 @@ ws.onmessage = function(e) {
      }
   } else if(e.data.includes('sitf-topics-return')) {
 
-     document.getElementById("discussions-list").innerHTML = '';
+     listTopics("discussions-list",e.data);
+
+  } else if (e.data.includes('sitf-login-sucess')) {
+  	goDiscussions();
+  } else if (e.data.includes('sitf-login-failure')) {
+  	alert('O login já está em uso ou está inválido');
+  } else if (e.data.includes('sitf-filter-topics-return')) {
+  	
+  	listTopics("discussions-list-filter",e.data);
+  }
+}
+
+function listTopics(listId,data) {
+
+  	   document.getElementById(listId).innerHTML = '';
    
-      var protocol = e.data.split(';');
+      var protocol = data.split(';');
       protocol.shift();
 
       for (var i = 0; i < protocol.length; i++) {
         if (!protocol[i] == '') {
         		var discussion = protocol[i].split('<>');
-           document.getElementById("discussions-list").innerHTML += '<a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">'+ discussion[1] +'</span><span class="discussion-topic">' + discussion[0] + '</span></a>'
+           document.getElementById(listId).innerHTML += '<a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">'+ discussion[1] +'</span><span class="discussion-topic">' + discussion[0] + '</span></a>'
         }
       }
 
         $('.collection-item').click(function() {
            goRoom($(this).children().eq(1).text(), $(this).children().eq(0).text());
         });
-
-  } else if (e.data.includes('sitf-login-sucess')) {
-  	goDiscussions();
-  } else if (e.data.includes('sitf-login-failure')) {
-  	alert('O login já está em uso ou está inválido');
-  }
 }
 
 function addMessageToChat(message) {
@@ -73,6 +81,13 @@ function goRoom(t, p) {
   preference_room = p;
   var protocol = "sitf-subscribe;" + topic + ";" + p;
   ws.send(protocol);
+
+	protocol = 'sitf-filter-topics'
+  for (var i = 0; i < preferences.length; i++) {
+  	protocol += ';' + preferences[i];
+  }
+  ws.send(protocol);
+  
   $('#splash-discussions').css('display', 'none');
   $('#splash-room').css('display', 'block');
   $('#room-title').text(t);

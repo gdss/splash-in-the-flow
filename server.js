@@ -61,6 +61,10 @@ wss.on('connection', function(ws) {
   			delete topics[preference][discussion];
   			attTopics();
   		}
+  	} else if (message.includes('sitf-filter-topics')) {
+  		var protocol = message.split(';');
+  		protocol.shift();
+  		ws.send('sitf-filter-topics-return;' + getTopics(protocol));
   	}
 
     console.log('received: %s', message);
@@ -78,8 +82,11 @@ function attTopics() {
 }
 
 function getAllTopics() {
+	return getTopics(Object.keys(topics));
+}
+
+function getTopics(preferences) {
 	var topics_return = [];
-	var preferences = Object.keys(topics);
 	for (var i = 0; i < preferences.length; i++) {
 		var discussions = Object.keys(topics[preferences[i]]);
 		for (var j = 0; j < discussions.length; j++) {

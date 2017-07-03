@@ -35,11 +35,13 @@ wss.on('connection', function(ws) {
   		} else {
   			topics[preference][discussion] = 1;
   			attTopics();
+  			attTopicsFilter(preference);
   		}
   		console.log('A discussion (' + discussion + ') tem ' + topics[preference][discussion] + ' online');
   	} else if (message.includes('sitf-publish')) {
   		var protocol = message.split(";");
-  		client.publish(protocol[1], protocol[2]);
+  		protocol.shift();
+  		client.publish(protocol[0], protocol[1]);
   	} else if (message.includes('sitf-topics')) {
   		ws.send('sitf-topics-return;' + getAllTopics());
   	} else if (message.includes('sitf-login')) {
@@ -60,6 +62,7 @@ wss.on('connection', function(ws) {
   		if (topics[preference][discussion] <= 0) {
   			delete topics[preference][discussion];
   			attTopics();
+  			attTopicsFilter(preference);
   		}
   	} else if (message.includes('sitf-filter-topics')) {
   		var protocol = message.split(';');
@@ -72,6 +75,15 @@ wss.on('connection', function(ws) {
 
   console.log('new connection');
 });
+
+function attTopicsFilter(filter) {
+wss.clients.forEach(function each(c) {
+		if (c.readyState === WebSocket.OPEN) {
+			c.send('sitf-filter-topics-return;' + getTopics([filter]));
+		}
+	});
+}
+
 
 function attTopics() {
 	wss.clients.forEach(function each(c) {
@@ -91,6 +103,7 @@ function getTopics(preferences) {
 		var discussions = Object.keys(topics[preferences[i]]);
 		for (var j = 0; j < discussions.length; j++) {
 			if(topics[preferences[i]][discussions[j]] > 0) {
+				console.log(discussions[j] + '<>' + preferences[i]);
 				topics_return.push(discussions[j] + '<>' + preferences[i]);
 			}
 		}

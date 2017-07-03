@@ -30,22 +30,27 @@ ws.onmessage = function(e) {
   }
 }
 
-function listTopics(listId,data) {
+function listTopics(listId, data) {
 
-  	   document.getElementById(listId).innerHTML = '';
+  	  document.getElementById(listId).innerHTML = '';
    
       var protocol = data.split(';');
       protocol.shift();
 
+      protocol = protocol.toString().split(',');
+
       for (var i = 0; i < protocol.length; i++) {
         if (!protocol[i] == '') {
-        		var discussion = protocol[i].split('<>');
+        	 var discussion = protocol[i].split('<>');
+        	 alert(protocol[i]);
            document.getElementById(listId).innerHTML += '<a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">'+ discussion[1] +'</span><span class="discussion-topic">' + discussion[0] + '</span></a>'
         }
       }
 
         $('.collection-item').click(function() {
-           goRoom($(this).children().eq(1).text(), $(this).children().eq(0).text());
+        		var title = $(this).children().eq(1).text();
+        		var preference = $(this).children().eq(0).text();
+            goRoom(title, preference);
         });
 }
 
@@ -93,7 +98,7 @@ function goRoom(t, p) {
   $('#room-title').text(t);
 
   document.getElementById("room-chat").innerHTML = '';
-  ws.send('sitf-publish;'+ topic + "-"+ preference_room +  ';' + nickname + ' entrou na sala');
+  ws.send('sitf-publish;'+ topic + "-"+ p +  ';' + nickname + ' entrou na sala');
 }
 
 function sendMessage(event) {

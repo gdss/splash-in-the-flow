@@ -103,7 +103,6 @@ function getTopics(preferences) {
 		var discussions = Object.keys(topics[preferences[i]]);
 		for (var j = 0; j < discussions.length; j++) {
 			if(topics[preferences[i]][discussions[j]] > 0) {
-				console.log(discussions[j] + '<>' + preferences[i]);
 				topics_return.push(discussions[j] + '<>' + preferences[i]);
 			}
 		}

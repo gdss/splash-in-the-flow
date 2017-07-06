@@ -1,4 +1,4 @@
-var ws = new WebSocket('ws://192.168.0.150:3000/splash');
+var ws = new WebSocket('ws://localhost:3000/splash');
 
 var nickname;
 var topic;
@@ -17,15 +17,12 @@ ws.onmessage = function(e) {
         updateScroll();
      }
   } else if(e.data.includes('sitf-topics-return')) {
-
      listTopics("discussions-list",e.data);
-
   } else if (e.data.includes('sitf-login-sucess')) {
   	goDiscussions();
   } else if (e.data.includes('sitf-login-failure')) {
   	alert('O login já está em uso ou está inválido');
   } else if (e.data.includes('sitf-filter-topics-return')) {
-  	
   	listTopics("discussions-list-filter",e.data);
   }
 }
@@ -42,7 +39,6 @@ function listTopics(listId, data) {
       for (var i = 0; i < protocol.length; i++) {
         if (!protocol[i] == '') {
         	 var discussion = protocol[i].split('<>');
-        	 alert(protocol[i]);
            document.getElementById(listId).innerHTML += '<a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">'+ discussion[1] +'</span><span class="discussion-topic">' + discussion[0] + '</span></a>'
         }
       }
@@ -59,7 +55,7 @@ function addMessageToChat(message) {
 }
 
 ws.onclose = function() {
-  alert('close');
+  alert('O servidor está fora do ar');
 }
 
 $('#login-start').click(function() {
@@ -68,10 +64,17 @@ $('#login-start').click(function() {
   ws.send('sitf-login;' + nickname);
 });
 
+function getPreferences() {
+	$('input:checkbox[name=preference]:checked').each(function() {
+		preferences.push($(this).val());
+	});
+}
+
 $('#new-discussion-submit').click(function() {
   var title = $('#new-discussion-title').val();
   var preference = $('#new-discussion-preference').val();
   goRoom(title, preference);
+  $('#new-discussion-title').val('');
 });
 
 function goDiscussions() {
@@ -82,6 +85,8 @@ function goDiscussions() {
 }
 
 function goRoom(t, p) {
+	exitRoom();
+
   topic = 'sitf-' + t;
   preference_room = p;
   var protocol = "sitf-subscribe;" + topic + ";" + p;
@@ -115,12 +120,15 @@ function updateScroll(){
 }
 
 $('#room-exit').click(function() {
-	ws.send('sitf-exit-subscribe;' + topic + ';' + preference_room);
-	goDiscussions();
+		exitRoom();
+		goDiscussions();
+		topic = '';
+		preference_room = '';
 });
 
-function getPreferences() {
-	$('input:checkbox[name=preference]:checked').each(function() {
-		preferences.push($(this).val());
-	});
+function exitRoom() {
+	if (topic != null && topic != '' && preference_room != null && preference_room != '') {
+		ws.send('sitf-publish;'+ topic +'-' + preference_room + ';' + nickname + ' saiu da sala');
+		ws.send('sitf-exit-subscribe;' + topic + ';' + preference_room);
+	}
 }

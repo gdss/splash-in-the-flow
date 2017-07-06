@@ -1,8 +1,8 @@
 var ws = new WebSocket('ws://localhost:3000/splash');
 
 var nickname;
-var topic;
-var preference_room;
+var topic = '';
+var preference_room = '';
 var preferences = [];
 
 ws.onopen = function() {
@@ -39,15 +39,15 @@ function listTopics(listId, data) {
       for (var i = 0; i < protocol.length; i++) {
         if (!protocol[i] == '') {
         	 var discussion = protocol[i].split('<>');
-           document.getElementById(listId).innerHTML += '<a href="#!" class="collection-item"><span class="new badge" data-badge-caption="">'+ discussion[1] +'</span><span class="discussion-topic">' + discussion[0] + '</span></a>'
+           document.getElementById(listId).innerHTML += '<a href="#!" id="'+ (listId + i) +'" class="collection-item"><span class="new badge" data-badge-caption="">'+ discussion[1] +'</span><span class="discussion-topic">' + discussion[0] + '</span></a>'
         }
-      }
 
-        $('.collection-item').click(function() {
+        $('#' + (listId + i)).click(function() {
         		var title = $(this).children().eq(1).text();
         		var preference = $(this).children().eq(0).text();
             goRoom(title, preference);
         });
+      }
 }
 
 function addMessageToChat(message) {
@@ -127,7 +127,7 @@ $('#room-exit').click(function() {
 });
 
 function exitRoom() {
-	if (topic != null && topic != '' && preference_room != null && preference_room != '') {
+	if (topic != undefined && topic != '' && preference_room != undefined && preference_room != '') {
 		ws.send('sitf-publish;'+ topic +'-' + preference_room + ';' + nickname + ' saiu da sala');
 		ws.send('sitf-exit-subscribe;' + topic + ';' + preference_room);
 	}
